@@ -1,248 +1,85 @@
-<p align="center">
-  <a href="https://opencode.ai">
-    <picture>
-      <source srcset="packages/console/app/src/asset/logo-ornate-dark.svg" media="(prefers-color-scheme: dark)">
-      <source srcset="packages/console/app/src/asset/logo-ornate-light.svg" media="(prefers-color-scheme: light)">
-      <img src="packages/console/app/src/asset/logo-ornate-light.svg" alt="OpenCode logo">
-    </picture>
-  </a>
-</p>
-<p align="center">The open source AI coding agent.</p>
-<p align="center">
-  <a href="https://opencode.ai/discord"><img alt="Discord" src="https://img.shields.io/discord/1391832426048651334?style=flat-square&label=discord" /></a>
-  <a href="https://www.npmjs.com/package/opencode-ai"><img alt="npm" src="https://img.shields.io/npm/v/opencode-ai?style=flat-square" /></a>
-  <a href="https://github.com/anomalyco/opencode/actions/workflows/publish.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/anomalyco/opencode/publish.yml?style=flat-square&branch=dev" /></a>
-</p>
+# Oh My OpenCode for SessionCast
 
-<p align="center">
-  <a href="README.md">English</a> |
-  <a href="README.zh.md">简体中文</a> |
-  <a href="README.zht.md">繁體中文</a> |
-  <a href="README.ko.md">한국어</a> |
-  <a href="README.de.md">Deutsch</a> |
-  <a href="README.es.md">Español</a> |
-  <a href="README.fr.md">Français</a> |
-  <a href="README.it.md">Italiano</a> |
-  <a href="README.da.md">Dansk</a> |
-  <a href="README.ja.md">日本語</a> |
-  <a href="README.pl.md">Polski</a> |
-  <a href="README.ru.md">Русский</a> |
-  <a href="README.bs.md">Bosanski</a> |
-  <a href="README.ar.md">العربية</a> |
-  <a href="README.no.md">Norsk</a> |
-  <a href="README.br.md">Português (Brasil)</a> |
-  <a href="README.th.md">ไทย</a> |
-  <a href="README.tr.md">Türkçe</a> |
-  <a href="README.uk.md">Українська</a> |
-  <a href="README.bn.md">বাংলা</a>
-</p>
+[Oh My OpenCode](https://github.com/code-yeongyu/oh-my-opencode) + [SessionCast](https://sessioncast.io) provider.
 
-[![OpenCode Terminal UI](packages/web/src/assets/lander/screenshot.png)](https://opencode.ai)
+Use specialized AI agents (Sisyphus, Oracle, Prometheus) powered by your own local LLM backend through SessionCast.
 
----
+## Quick Start
 
-### Installation
+### 1. Install SessionCast CLI
 
 ```bash
-# YOLO
-curl -fsSL https://opencode.ai/install | bash
-
-# Package managers
-npm i -g opencode-ai@latest        # or bun/pnpm/yarn
-scoop install opencode             # Windows
-choco install opencode             # Windows
-brew install anomalyco/tap/opencode # macOS and Linux (recommended, always up to date)
-brew install opencode              # macOS and Linux (official brew formula, updated less)
-sudo pacman -S opencode            # Arch Linux (Stable)
-paru -S opencode-bin               # Arch Linux (Latest from AUR)
-mise use -g opencode               # Any OS
-nix run nixpkgs#opencode           # or github:anomalyco/opencode for latest dev branch
+npm i -g sessioncast-cli
+sessioncast login
+sessioncast agent
 ```
 
-> [!TIP]
-> Remove versions older than 0.1.x before installing.
-
-### Desktop App (BETA)
-
-OpenCode is also available as a desktop application. Download directly from the [releases page](https://github.com/anomalyco/opencode/releases) or [opencode.ai/download](https://opencode.ai/download).
-
-| Platform              | Download                              |
-| --------------------- | ------------------------------------- |
-| macOS (Apple Silicon) | `opencode-desktop-darwin-aarch64.dmg` |
-| macOS (Intel)         | `opencode-desktop-darwin-x64.dmg`     |
-| Windows               | `opencode-desktop-windows-x64.exe`    |
-| Linux                 | `.deb`, `.rpm`, or AppImage           |
+### 2. Install Oh My OpenCode for SessionCast
 
 ```bash
-# macOS (Homebrew)
-brew install --cask opencode-desktop
-# Windows (Scoop)
-scoop bucket add extras; scoop install extras/opencode-desktop
+git clone -b feat/sessioncast-provider \
+  https://github.com/sessioncast/oh-my-opencode-for-sessioncast.git
+cd oh-my-opencode-for-sessioncast
+npm install && npm run build
+npm link
 ```
 
-#### Installation Directory
+### 3. Configure Agents
 
-The install script respects the following priority order for the installation path:
-
-1. `$OPENCODE_INSTALL_DIR` - Custom installation directory
-2. `$XDG_BIN_DIR` - XDG Base Directory Specification compliant path
-3. `$HOME/bin` - Standard user binary directory (if it exists or can be created)
-4. `$HOME/.opencode/bin` - Default fallback
-
-```bash
-# Examples
-OPENCODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://opencode.ai/install | bash
-XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://opencode.ai/install | bash
-```
-
-### Agents
-
-OpenCode includes two built-in agents you can switch between with the `Tab` key.
-
-- **build** - Default, full-access agent for development work
-- **plan** - Read-only agent for analysis and code exploration
-  - Denies file edits by default
-  - Asks permission before running bash commands
-  - Ideal for exploring unfamiliar codebases or planning changes
-
-Also included is a **general** subagent for complex searches and multistep tasks.
-This is used internally and can be invoked using `@general` in messages.
-
-Learn more about [agents](https://opencode.ai/docs/agents).
-
-### Documentation
-
-For more info on how to configure OpenCode, [**head over to our docs**](https://opencode.ai/docs).
-
-### Contributing
-
-If you're interested in contributing to OpenCode, please read our [contributing docs](./CONTRIBUTING.md) before submitting a pull request.
-
-### Building on OpenCode
-
-If you are working on a project that's related to OpenCode and is using "opencode" as part of its name, for example "opencode-dashboard" or "opencode-mobile", please add a note to your README to clarify that it is not built by the OpenCode team and is not affiliated with us in any way.
-
-### FAQ
-
-#### How is this different from Claude Code?
-
-It's very similar to Claude Code in terms of capability. Here are the key differences:
-
-- 100% open source
-- Not coupled to any provider. Although we recommend the models we provide through [OpenCode Zen](https://opencode.ai/zen), OpenCode can be used with Claude, OpenAI, Google, or even local models. As models evolve, the gaps between them will close and pricing will drop, so being provider-agnostic is important.
-- Out-of-the-box LSP support
-- A focus on TUI. OpenCode is built by neovim users and the creators of [terminal.shop](https://terminal.shop); we are going to push the limits of what's possible in the terminal.
-- A client/server architecture. This, for example, can allow OpenCode to run on your computer while you drive it remotely from a mobile app, meaning that the TUI frontend is just one of the possible clients.
-
----
-
-## SessionCast Provider (Fork)
-
-This fork adds a **SessionCast provider** that routes LLM requests through a WebSocket relay to a [SessionCast CLI agent](https://github.com/sessioncast/sessioncast-cli). The agent handles the actual LLM call (Claude Code, Ollama, OpenAI, etc.) on the machine where it runs.
-
-### How It Works
-
-```
-OpenCode (this binary)
-  → WebSocket relay (relay.sessioncast.io)
-    → SessionCast CLI agent (your machine)
-      → LLM provider (Claude Code, etc.)
-```
-
-### Prerequisites
-
-1. **SessionCast CLI agent** running with `llm_chat` capability enabled
-2. **`~/.sessioncast.yml`** configured with relay URL and agent token:
-   ```yaml
-   machineId: my-machine
-   relay: wss://relay.sessioncast.io/ws
-   token: agt_YOUR_TOKEN
-   api:
-     enabled: true
-     agentId: my-machine
-     capabilities:
-       llm_chat: true
-     llm:
-       enabled: true
-       provider: claude-code
-       model: sonnet
-   ```
-
-The provider auto-detects this config file — no additional environment variables needed.
-
-### Oh My OpenCode Setup
-
-To use this fork with [Oh My OpenCode](https://github.com/code-yeongyu/oh-my-opencode):
-
-#### 1. Build and install the binary
-
-```bash
-git clone https://github.com/sessioncast/oh-my-opencode-fork.git
-cd oh-my-opencode-fork
-git checkout feat/sessioncast-provider
-bun install && cd packages/opencode && bun run build
-```
-
-Copy the built binary to your PATH:
-
-```bash
-# macOS Apple Silicon
-cp dist/opencode-darwin-arm64/bin/opencode /usr/local/bin/opencode
-
-# or add to a custom PATH directory
-mkdir -p ~/.local/bin
-cp dist/opencode-darwin-arm64/bin/opencode ~/.local/bin/opencode
-```
-
-#### 2. Configure Oh My OpenCode agents
-
-Edit `~/.config/opencode/oh-my-opencode.json` to set all agents to `sessioncast/claude-code`:
+Create `~/.config/opencode/oh-my-opencode.json`:
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
   "agents": {
     "sisyphus": { "model": "sessioncast/claude-code" },
     "oracle": { "model": "sessioncast/claude-code" },
-    "librarian": { "model": "sessioncast/claude-code" },
-    "explore": { "model": "sessioncast/claude-code" },
-    "prometheus": { "model": "sessioncast/claude-code" },
-    "metis": { "model": "sessioncast/claude-code" },
-    "momus": { "model": "sessioncast/claude-code" },
-    "atlas": { "model": "sessioncast/claude-code" }
-  },
-  "categories": {
-    "visual-engineering": { "model": "sessioncast/claude-code" },
-    "ultrabrain": { "model": "sessioncast/claude-code" },
-    "quick": { "model": "sessioncast/claude-code" },
-    "unspecified-low": { "model": "sessioncast/claude-code" },
-    "unspecified-high": { "model": "sessioncast/claude-code" },
-    "writing": { "model": "sessioncast/claude-code" }
+    "prometheus": { "model": "sessioncast/claude-code" }
   }
 }
 ```
 
-#### 3. Start the CLI agent and run
+### 4. Run
 
 ```bash
-# Start the SessionCast CLI agent (in a separate terminal)
-sessioncast-cli agent
-
-# Run Oh My OpenCode
-oh-my-opencode run 'Your prompt here'
+oh-my-opencode run 'Explain what Kubernetes is in 2 sentences.'
 ```
 
-### Standalone Usage
+## How It Works
 
-You can also use this binary directly without Oh My OpenCode:
-
-```bash
-# The SessionCast provider is auto-detected from ~/.sessioncast.yml
-opencode
+```
+Oh My OpenCode
+  → OpenCode (TypeScript)
+    → SessionCast Provider
+      → SessionCast Relay
+        → CLI Agent (your machine)
+          → Claude Code / Ollama / OpenAI / Gemini ...
 ```
 
-The provider registers as `sessioncast/claude-code` in the model list.
+All AI requests are routed through your local SessionCast CLI agent. You choose the LLM backend — Claude Code CLI, Ollama, OpenAI API, Anthropic API, Gemini, or Codex CLI.
 
----
+## LLM Backend Configuration
 
-**Join our community** [Discord](https://discord.gg/opencode) | [X.com](https://x.com/opencode)
+Configure your preferred backend in `~/.sessioncast.yml`:
+
+```yaml
+api:
+  llm:
+    provider: claude-code   # or ollama, openai, anthropic, gemini
+    model: sonnet
+```
+
+Switch models without changing Oh My OpenCode config. The provider stays `sessioncast/claude-code` — only the backend changes.
+
+## About This Fork
+
+This is a fork of [Oh My OpenCode](https://github.com/code-yeongyu/oh-my-opencode) with the SessionCast provider added. The SessionCast provider enables all agents to route AI requests through your local CLI agent, giving you full control over which LLM you use.
+
+**This fork does not use Claude Pro/Max OAuth tokens.** SessionCast calls LLM APIs with your own API keys or local models. See [Anthropic's compliance policy](https://code.claude.com/docs/en/legal-and-compliance) for details on OAuth restrictions.
+
+## Links
+
+- [SessionCast](https://sessioncast.io) — Product page
+- [SessionCast CLI](https://www.npmjs.com/package/sessioncast-cli) — npm package
+- [OpenCode](https://github.com/anomalyco/opencode) — Go-based terminal AI assistant
+- [Oh My OpenCode](https://github.com/code-yeongyu/oh-my-opencode) — Original project
+- [Blog Post](https://sessioncast.io/blog/2026-02-27-opencode-integration) — Full setup guide
