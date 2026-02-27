@@ -56,7 +56,7 @@ export class SessionCastChatModel implements LanguageModelV2 {
     const chatMessages = convertPrompt(options.prompt)
 
     const req: LlmChatRequest = {
-      model: this.modelId,
+      model: "",
       messages: chatMessages,
       max_tokens: options.maxOutputTokens,
       temperature: options.temperature,
@@ -102,7 +102,7 @@ export class SessionCastChatModel implements LanguageModelV2 {
     const chatMessages = convertPrompt(options.prompt)
 
     const req: LlmChatRequest = {
-      model: this.modelId,
+      model: "",
       messages: chatMessages,
       max_tokens: options.maxOutputTokens,
       temperature: options.temperature,
