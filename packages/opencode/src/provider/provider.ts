@@ -29,6 +29,7 @@ import { createOpenAI } from "@ai-sdk/openai"
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible"
 import { createOpenRouter, type LanguageModelV2 } from "@openrouter/ai-sdk-provider"
 import { createOpenaiCompatible as createGitHubCopilotOpenAICompatible } from "./sdk/copilot"
+import { createSessionCast } from "./sdk/sessioncast"
 import { createXai } from "@ai-sdk/xai"
 import { createMistral } from "@ai-sdk/mistral"
 import { createGroq } from "@ai-sdk/groq"
@@ -107,6 +108,7 @@ export namespace Provider {
     "@gitlab/gitlab-ai-provider": createGitLab,
     // @ts-ignore (TODO: kill this code so we dont have to maintain it)
     "@ai-sdk/github-copilot": createGitHubCopilotOpenAICompatible,
+    "@sessioncast/ai-sdk-provider": createSessionCast,
   }
 
   type CustomModelLoader = (sdk: any, modelID: string, options?: Record<string, any>) => Promise<any>
@@ -588,6 +590,43 @@ export namespace Provider {
         },
       }
     },
+    sessioncast: async () => {
+      // Auto-detect SessionCast config from ~/.sessioncast.yml
+      const configPath = path.join(os.homedir(), ".sessioncast.yml")
+      try {
+        const raw = await Filesystem.readText(configPath)
+        if (!raw) return { autoload: false }
+
+        // Parse simple YAML key: value pairs
+        const lines = raw.split("\n")
+        const yml: Record<string, string> = {}
+        for (const line of lines) {
+          const match = line.match(/^(\w+):\s*(.+)$/)
+          if (match) yml[match[1]] = match[2].trim()
+        }
+
+        const relayUrl = yml["relay"]
+        const token = yml["token"]
+        const machineId = yml["machineId"]
+
+        if (!relayUrl || !token) return { autoload: false }
+
+        return {
+          autoload: true,
+          options: {
+            relayUrl,
+            token,
+            machineId,
+            label: "opencode",
+          },
+          async getModel(sdk: any, modelID: string) {
+            return sdk.languageModel(modelID)
+          },
+        }
+      } catch {
+        return { autoload: false }
+      }
+    },
   }
 
   export const Model = z
@@ -791,6 +830,52 @@ export namespace Provider {
           ...model,
           providerID: "github-copilot-enterprise",
         })),
+      }
+    }
+
+    // Add SessionCast provider with default model if not already in database
+    if (!database["sessioncast"]) {
+      const sessioncastModel: Model = {
+        id: "claude-code",
+        providerID: "sessioncast",
+        name: "Claude Code (via SessionCast)",
+        api: {
+          id: "claude-code",
+          url: "",
+          npm: "@sessioncast/ai-sdk-provider",
+        },
+        status: "active",
+        headers: {},
+        options: {},
+        cost: {
+          input: 0,
+          output: 0,
+          cache: { read: 0, write: 0 },
+        },
+        limit: {
+          context: 200000,
+          output: 16384,
+        },
+        capabilities: {
+          temperature: true,
+          reasoning: false,
+          attachment: false,
+          toolcall: true,
+          input: { text: true, audio: false, image: false, video: false, pdf: false },
+          output: { text: true, audio: false, image: false, video: false, pdf: false },
+          interleaved: false,
+        },
+        release_date: "2025-01-01",
+        family: "claude",
+        variants: {},
+      }
+      database["sessioncast"] = {
+        id: "sessioncast",
+        name: "SessionCast",
+        source: "custom",
+        env: ["SESSIONCAST_TOKEN"],
+        options: {},
+        models: { "claude-code": sessioncastModel },
       }
     }
 
