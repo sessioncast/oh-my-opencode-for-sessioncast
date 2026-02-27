@@ -136,4 +136,113 @@ It's very similar to Claude Code in terms of capability. Here are the key differ
 
 ---
 
+## SessionCast Provider (Fork)
+
+This fork adds a **SessionCast provider** that routes LLM requests through a WebSocket relay to a [SessionCast CLI agent](https://github.com/sessioncast/sessioncast-cli). The agent handles the actual LLM call (Claude Code, Ollama, OpenAI, etc.) on the machine where it runs.
+
+### How It Works
+
+```
+OpenCode (this binary)
+  → WebSocket relay (relay.sessioncast.io)
+    → SessionCast CLI agent (your machine)
+      → LLM provider (Claude Code, etc.)
+```
+
+### Prerequisites
+
+1. **SessionCast CLI agent** running with `llm_chat` capability enabled
+2. **`~/.sessioncast.yml`** configured with relay URL and agent token:
+   ```yaml
+   machineId: my-machine
+   relay: wss://relay.sessioncast.io/ws
+   token: agt_YOUR_TOKEN
+   api:
+     enabled: true
+     agentId: my-machine
+     capabilities:
+       llm_chat: true
+     llm:
+       enabled: true
+       provider: claude-code
+       model: sonnet
+   ```
+
+The provider auto-detects this config file — no additional environment variables needed.
+
+### Oh My OpenCode Setup
+
+To use this fork with [Oh My OpenCode](https://github.com/code-yeongyu/oh-my-opencode):
+
+#### 1. Build and install the binary
+
+```bash
+git clone https://github.com/sessioncast/oh-my-opencode-fork.git
+cd oh-my-opencode-fork
+git checkout feat/sessioncast-provider
+bun install && cd packages/opencode && bun run build
+```
+
+Copy the built binary to your PATH:
+
+```bash
+# macOS Apple Silicon
+cp dist/opencode-darwin-arm64/bin/opencode /usr/local/bin/opencode
+
+# or add to a custom PATH directory
+mkdir -p ~/.local/bin
+cp dist/opencode-darwin-arm64/bin/opencode ~/.local/bin/opencode
+```
+
+#### 2. Configure Oh My OpenCode agents
+
+Edit `~/.config/opencode/oh-my-opencode.json` to set all agents to `sessioncast/claude-code`:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
+  "agents": {
+    "sisyphus": { "model": "sessioncast/claude-code" },
+    "oracle": { "model": "sessioncast/claude-code" },
+    "librarian": { "model": "sessioncast/claude-code" },
+    "explore": { "model": "sessioncast/claude-code" },
+    "prometheus": { "model": "sessioncast/claude-code" },
+    "metis": { "model": "sessioncast/claude-code" },
+    "momus": { "model": "sessioncast/claude-code" },
+    "atlas": { "model": "sessioncast/claude-code" }
+  },
+  "categories": {
+    "visual-engineering": { "model": "sessioncast/claude-code" },
+    "ultrabrain": { "model": "sessioncast/claude-code" },
+    "quick": { "model": "sessioncast/claude-code" },
+    "unspecified-low": { "model": "sessioncast/claude-code" },
+    "unspecified-high": { "model": "sessioncast/claude-code" },
+    "writing": { "model": "sessioncast/claude-code" }
+  }
+}
+```
+
+#### 3. Start the CLI agent and run
+
+```bash
+# Start the SessionCast CLI agent (in a separate terminal)
+sessioncast-cli agent
+
+# Run Oh My OpenCode
+oh-my-opencode run 'Your prompt here'
+```
+
+### Standalone Usage
+
+You can also use this binary directly without Oh My OpenCode:
+
+```bash
+# The SessionCast provider is auto-detected from ~/.sessioncast.yml
+opencode
+```
+
+The provider registers as `sessioncast/claude-code` in the model list.
+
+---
+
 **Join our community** [Discord](https://discord.gg/opencode) | [X.com](https://x.com/opencode)
